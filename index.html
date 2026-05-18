@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Kuis Hukum Islam & Peradilan Agama</title>
+  <meta name="description" content="Kuis interaktif hukum Islam dan peradilan agama Indonesia berbasis AI Gemini"/>
+  <meta name="theme-color" content="#0D1117"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Kuis Hukum"/>
+  <meta property="og:title" content="Kuis Hukum Islam & Peradilan Agama"/>
+  <meta property="og:description" content="Latihan soal KHI, KHES, Hukum Acara PA, E-Litigasi, dan lainnya — berbasis AI"/>
+  <meta property="og:type" content="website"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+/* ═══════════════════════════════════════════════
+   RESET & TOKENS
+═══════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
+:root{
+  --bg:#0B0F18;
+  --bg2:#111622;
+  --surface:#161D2B;
+  --surface2:#1C2438;
+  --surface3:#222C3D;
+  --gold:#C9AA71;
+  --gold2:#E5C98A;
+  --gold3:#F0DBA8;
+  --golddim:rgba(201,170,113,.12);
+  --goldborder:rgba(201,170,113,.2);
+  --teal:#6FBFAA;
+  --rose:#C97A7A;
+  --text:#EDE5D8;
+  --textdim:#8C8278;
+  --textfaint:#4A4540;
+  --radius:14px;
+  --radiussm:10px;
+  --shadow:0 4px 24px rgba(0,0,0,.5);
+}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  min-height:100vh;min-height:100dvh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;outline:none}
+input{font-family:inherit;outline:none}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--goldborder);border-radius:3px}
+
+/* ═══════════════════════════════════════════════
+   BACKGROUND
+═══════════════════════════════════════════════ */
+.bg-wrap{
+  position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+}
+.bg-mesh{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 85% 5%,rgba(201,170,113,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 10% 90%,rgba(111,191,170,.05) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 50%,rgba(201,170,113,.03) 0%,transparent 70%);
+}
+.bg-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(201,170,113,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(201,170,113,.04) 1px,transparent 1px);
+  background-size:40px 40px;
+  mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%);
+}
+.bg-hexa{
+  position:absolute;inset:0;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='64'%3E%3Cpolygon points='28,2 54,16 54,48 28,62 2,48 2,16' fill='none' stroke='rgba(201,170,113,0.06)' stroke-width='0.8'/%3E%3C/svg%3E");
+}
+
+/* ═══════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════ */
+#app{
+  position:relative;z-index:1;
+  min-height:100vh;min-height:100dvh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:24px 16px 80px;
+}
+.wrap{width:100%;max-width:660px}
+
+/* ═══════════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:.8}50%{opacity:.4}}
+@keyframes shimmer{from{background-position:200% center}to{background-position:-200% center}}
+@keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+.anim-up{animation:fadeUp .45s cubic-bezier(.22,1,.36,1) both}
+.anim-pop{animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both}
+
+/* ═══════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════ */
+.header{text-align:center;margin-bottom:28px}
+.bismillah{
+  font-family:'Amiri',serif;font-size:26px;
+  color:var(--gold);letter-spacing:3px;margin-bottom:8px;opacity:.9;
+}
+.divider{
+  display:flex;align-items:center;gap:10px;
+  max-width:200px;margin:0 auto 10px;
+}
+.divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.divider-gem{width:5px;height:5px;background:var(--gold);border-radius:1px;transform:rotate(45deg);opacity:.7}
+.app-title{font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1.1}
+.app-title .hi{color:var(--gold)}
+.app-tagline{font-size:11px;color:var(--textdim);letter-spacing:2.5px;text-transform:uppercase;margin-top:6px}
+.app-powered{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:10px;color:var(--textfaint);letter-spacing:1px;
+  text-transform:uppercase;margin-top:8px;
+  background:var(--surface2);border:1px solid var(--goldborder);
+  border-radius:20px;padding:3px 10px;
+}
+.app-powered .gem{width:6px;height:6px;background:linear-gradient(135deg,#4285F4,#34A853);border-radius:50%}
+
+/* ═══════════════════════════════════════════════
+   CARD
+═══════════════════════════════════════════════ */
+.card{
+  background:var(--surface);
+  border:1px solid var(--goldborder);
+  border-radius:var(--radius);
+  padding:20px;margin-bottom:12px;
+  box-shadow:var(--shadow);
+}
+.card-label{
+  font-size:10px;font-weight:700;
+  color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;margin-bottom:14px;
+}
+.card-label::after{content:'';flex:1;height:1px;background:var(--goldborder)}
+
+/* ═══════════════════════════════════════════════
+   API KEY
+═══════════════════════════════════════════════ */
+.key-field{position:relative}
+.key-input{
+  width:100%;background:var(--surface2);
+  border:1.5px solid var(--goldborder);border-radius:var(--radiussm);
+  padding:12px 42px 12px 14px;
+  font-size:14px;color:var(--text);
+  transition:border-color .2s;
+}
+.key-input:focus{border-color:var(--gold)}
+.key-input::placeholder{color:var(--textfaint)}
+.key-eye{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  color:var(--textdim);font-size:16px;line-height:1;
+  padding:4px;transition:color .2s;
+}
+.key-eye:hover{color:var(--gold)}
+.key-note{font-size:11px;color:var(--textdim);margin-top:8px;line-height:1.6}
+.key-note a{color:var(--gold);text-decoration:none}
+.key-note a:hover{text-decoration:underline}
+.key-ok{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--teal);margin-top:6px}
+
+/* ═══════════════════════════════════════════════
+   TOPIC GRID
+═══════════════════════════════════════════════ */
+.topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.topic-btn{
+  background:var(--surface2);border:1.5px solid var(--goldborder);
+  border-radius:var(--radiussm);padding:12px 13px;
+  display:flex;align-items:center;gap:10px;
+  text-align:left;transition:all .18s;
+  position:relative;overflow:hidden;
+}
+.topic-btn::after{
+  content:'';position:absolute;inset:0;
+  background:var(--golddim);opacity:0;transition:opacity .18s;
+}
+.topic-btn:hover::after{opacity:1}
+.topic-btn:hover{border-color:rgba(201,170,113,.45)}
+.topic-btn.on{
+  border-color:var(--gold);
+  box-shadow:0 0 0 1px var(--gold),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.topic-btn.on::after{opacity:1}
+.topic-icon{font-size:20px;flex-shrink:0;line-height:1;position:relative;z-index:1}
+.topic-texts{position:relative;z-index:1}
+.topic-id{font-size:12px;font-weight:700;color:var(--text);line-height:1}
+.topic-nm{font-size:10px;color:var(--textdim);line-height:1.3;margin-top:2px}
+.topic-ck{
+  margin-left:auto;width:18px;height:18px;border-radius:50%;
+  background:var(--gold);display:flex;align-items:center;justify-content:center;
+  font-size:9px;color:#0B0F18;font-weight:900;flex-shrink:0;
+  opacity:0;transform:scale(.3);transition:all .2s cubic-bezier(.34,1.56,.64,1);
+  position:relative;z-index:1;
+}
+.topic-btn.on .topic-ck{opacity:1;transform:scale(1)}
+
+/* ═══════════════════════════════════════════════
+   COUNT SELECTOR
+═══════════════════════════════════════════════ */
+.count-row{display:flex;flex-wrap:wrap;gap:8px}
+.count-btn{
+  background:var(--surface2);border:1.5px solid var(--goldborder);
+  border-radius:8px;padding:8px 18px;
+  font-size:14px;font-weight:700;color:var(--text);
+  transition:all .18s;
+}
+.count-btn:hover{border-color:rgba(201,170,113,.45)}
+.count-btn.on{
+  border-color:var(--gold);color:var(--gold2);
+  background:var(--golddim);box-shadow:0 0 0 1px var(--gold);
+}
+
+/* ═══════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════ */
+.btn-gold{
+  width:100%;padding:15px;
+  background:linear-gradient(135deg,#C9AA71 0%,#E5C98A 40%,#F0DBA8 60%,#C9AA71 100%);
+  background-size:300%;background-position:0;
+  color:#0B0F18;border-radius:var(--radiussm);
+  font-size:15px;font-weight:800;letter-spacing:.3px;
+  transition:all .35s;position:relative;overflow:hidden;
+}
+.btn-gold::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 30%,rgba(255,255,255,.15) 50%,transparent 70%);
+  transform:translateX(-100%);transition:transform .5s;
+}
+.btn-gold:hover:not(:disabled)::before{transform:translateX(100%)}
+.btn-gold:hover:not(:disabled){
+  background-position:100%;
+  transform:translateY(-2px);
+  box-shadow:0 12px 32px rgba(201,170,113,.28);
+}
+.btn-gold:active:not(:disabled){transform:none}
+.btn-gold:disabled{opacity:.4;cursor:not-allowed}
+
+.btn-next{
+  width:100%;margin-top:12px;padding:14px;
+  background:linear-gradient(135deg,#C9AA71,#E5C98A);
+  color:#0B0F18;border-radius:var(--radiussm);
+  font-size:15px;font-weight:800;
+  transition:all .2s;
+}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,170,113,.25)}
+
+.btn-outline{
+  flex:1;padding:12px;border-radius:var(--radiussm);
+  border:1.5px solid var(--goldborder);color:var(--text);
+  font-size:13px;font-weight:700;transition:all .2s;
+}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+
+.btn-fill{
+  flex:1;padding:12px;border-radius:var(--radiussm);
+  background:linear-gradient(135deg,#C9AA71,#E5C98A);
+  color:#0B0F18;font-size:13px;font-weight:800;
+  transition:all .2s;
+}
+.btn-fill:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(201,170,113,.25)}
+
+.btn-row{display:flex;gap:10px}
+
+/* ═══════════════════════════════════════════════
+   QUIZ HEADER
+═══════════════════════════════════════════════ */
+.quiz-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.quiz-counter{font-size:13px;color:var(--textdim);font-weight:600}
+.quiz-score{
+  background:var(--golddim);border:1px solid var(--goldborder);
+  border-radius:8px;padding:4px 12px;
+  font-size:13px;font-weight:700;color:var(--gold);
+}
+.prog-track{height:4px;background:var(--surface3);border-radius:4px;margin-bottom:16px;overflow:hidden}
+.prog-fill{
+  height:100%;
+  background:linear-gradient(90deg,#C9AA71,#E5C98A,#C9AA71);
+  background-size:200%;
+  animation:shimmer 2s linear infinite;
+  border-radius:4px;transition:width .5s cubic-bezier(.4,0,.2,1);
+}
+
+/* ═══════════════════════════════════════════════
+   QUESTION
+═══════════════════════════════════════════════ */
+.q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.q-topic{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:10px;font-weight:700;color:var(--textdim);
+  letter-spacing:2px;text-transform:uppercase;
+}
+.q-diff{
+  font-size:9px;font-weight:800;padding:3px 10px;
+  border-radius:20px;letter-spacing:1.5px;text-transform:uppercase;
+}
+.diff-mudah{background:rgba(111,191,170,.15);color:#6FBFAA;border:1px solid rgba(111,191,170,.3)}
+.diff-sedang{background:rgba(201,170,113,.15);color:#C9AA71;border:1px solid rgba(201,170,113,.3)}
+.diff-sulit {background:rgba(201,122,122,.15);color:#C97A7A;border:1px solid rgba(201,122,122,.3)}
+.q-text{font-size:16px;font-weight:600;line-height:1.7;color:var(--text);margin-bottom:18px}
+
+/* ═══════════════════════════════════════════════
+   OPTIONS
+═══════════════════════════════════════════════ */
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--surface2);border:1.5px solid var(--goldborder);
+  border-radius:var(--radiussm);padding:13px 14px;
+  text-align:left;width:100%;
+  transition:all .18s;
+  animation:slideRight .3s ease both;
+}
+.opt:nth-child(1){animation-delay:.04s}
+.opt:nth-child(2){animation-delay:.09s}
+.opt:nth-child(3){animation-delay:.14s}
+.opt:nth-child(4){animation-delay:.19s}
+.opt:hover:not(.locked){
+  border-color:rgba(201,170,113,.5);
+  background:var(--surface3);
+  transform:translateX(4px);
+}
+.opt.locked{cursor:default}
+.opt.correct{border-color:var(--teal);background:rgba(111,191,170,.1);transform:none}
+.opt.wrong  {border-color:var(--rose);background:rgba(201,122,122,.1);transform:none}
+.opt.faded  {opacity:.4;transform:none}
+.opt-key{
+  width:28px;height:28px;border-radius:7px;flex-shrink:0;
+  background:var(--surface);border:1px solid var(--goldborder);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:var(--textdim);
+  transition:all .18s;
+}
+.opt.correct .opt-key{background:var(--teal);color:#0B0F18;border-color:var(--teal)}
+.opt.wrong   .opt-key{background:var(--rose);color:#fff;border-color:var(--rose)}
+.opt-val{font-size:14px;color:var(--text);line-height:1.55;padding-top:3px}
+
+/* ═══════════════════════════════════════════════
+   EXPLANATION
+═══════════════════════════════════════════════ */
+.expl{
+  margin-top:14px;background:var(--surface2);
+  border:1px solid var(--goldborder);border-left:3px solid var(--gold);
+  border-radius:var(--radiussm);padding:14px 15px;
+  font-size:13px;color:var(--textdim);line-height:1.65;
+  animation:fadeIn .3s ease;
+}
+.expl strong{color:var(--gold2)}
+
+/* ═══════════════════════════════════════════════
+   RESULT
+═══════════════════════════════════════════════ */
+.ring-wrap{display:flex;justify-content:center;margin-bottom:20px}
+.ring-box{position:relative;width:148px;height:148px}
+.ring-box svg{transform:rotate(-90deg)}
+.ring-inner{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.ring-pct{font-size:38px;font-weight:800;color:var(--gold);line-height:1}
+.ring-lbl{font-size:9px;color:var(--textdim);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.verdict{text-align:center;font-size:21px;font-weight:800;color:var(--text);margin-bottom:5px}
+.verdict-sub{text-align:center;font-size:13px;color:var(--textdim);margin-bottom:22px;line-height:1.6}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.stat-box{
+  background:var(--surface2);border:1px solid var(--goldborder);
+  border-radius:var(--radiussm);padding:14px;text-align:center;
+}
+.stat-val{font-size:26px;font-weight:800;line-height:1}
+.stat-lbl{font-size:9px;color:var(--textdim);margin-top:4px;letter-spacing:1.5px}
+
+/* ═══════════════════════════════════════════════
+   LOADING
+═══════════════════════════════════════════════ */
+.loading-wrap{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:52px 20px;gap:18px;text-align:center;
+}
+.spinner{
+  width:52px;height:52px;
+  border:3px solid var(--goldborder);
+  border-top-color:var(--gold);
+  border-radius:50%;animation:spin .75s linear infinite;
+}
+.ld-title{font-size:17px;font-weight:700}
+.ld-msg{font-size:13px;color:var(--textdim);animation:pulse 1.5s ease infinite}
+.ld-sub{font-size:11px;color:var(--textfaint)}
+
+/* ═══════════════════════════════════════════════
+   ERROR
+═══════════════════════════════════════════════ */
+.err{
+  background:rgba(201,122,122,.1);
+  border:1px solid rgba(201,122,122,.35);
+  border-radius:var(--radiussm);padding:13px 15px;
+  font-size:13px;color:#E09090;margin-bottom:12px;line-height:1.55;
+}
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════ */
+.footer{
+  text-align:center;margin-top:20px;
+  font-size:11px;color:var(--textfaint);line-height:1.7;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media(max-width:480px){
+  .topic-grid{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  #app{padding:18px 12px 60px}
+  .app-title{font-size:24px}
+  .q-text{font-size:15px}
+}
+@media(min-width:700px){
+  .topic-grid{grid-template-columns:repeat(4,1fr)}
+}
+  </style>
+</head>
+<body>
+<div class="bg-wrap">
+  <div class="bg-mesh"></div>
+  <div class="bg-grid"></div>
+  <div class="bg-hexa"></div>
+</div>
+<div id="app"><div class="wrap" id="wrap"></div></div>
+
+<script>
+"use strict";
+/* ════════════════════════════════════════════
+   DATA
+════════════════════════════════════════════ */
+const TOPICS=[
+  {id:"KHI",  icon:"📖",label:"KHI",  name:"Kompilasi Hukum Islam"},
+  {id:"KHES", icon:"⚖️", label:"KHES", name:"Kompilasi Hukum Ekonomi Syariah"},
+  {id:"HAPA", icon:"🏛️",label:"HAPA", name:"Hukum Acara Peradilan Agama"},
+  {id:"ELIT", icon:"💻",label:"ELIT", name:"E-Litigasi Peradilan Agama"},
+  {id:"HPER", icon:"💍",label:"HPER", name:"Hukum Perkawinan"},
+  {id:"UKEH", icon:"🔨",label:"UKEH", name:"UU Kekuasaan Kehakiman"},
+  {id:"UPAN", icon:"📋",label:"UPAN", name:"Panitera & Panitera Pengganti"},
+  {id:"UJUR", icon:"📜",label:"UJUR", name:"Jurusita & Jurusita Pengganti"},
+];
+const DETAIL={
+  KHI:"Kompilasi Hukum Islam (KHI) Inpres No.1/1991. Buku I: Perkawinan (wali nikah, mahar, ijab kabul, hak-kewajiban suami istri, talak, cerai gugat, khuluk, fasakh, iddah, rujuk, mut'ah, nusyuz, syiqaq, poligami, taklik talak). Buku II: Kewarisan (ashabul furudh, ashabah, hajb, aul, radd, mawali, wasiat, hibah). Buku III: Perwakafan (nazhir, ikrar wakaf, benda wakaf, peruntukan wakaf).",
+  KHES:"Kompilasi Hukum Ekonomi Syariah (KHES) Perma No.2/2008. Akad dan syaratnya, jual beli (murabahah, salam, istishna), bagi hasil (mudharabah, musyarakah), sewa (ijarah, ijarah muntahiyyah bit tamlik), jaminan (kafalah, rahn), pengalihan utang (hawalah), titipan (wadi'ah), pinjam-meminjam (qardh), pertukaran valuta (sharf), reksa dana syariah, obligasi syariah, asuransi syariah.",
+  HAPA:"Hukum Acara Peradilan Agama: UU No.7/1989 diubah UU No.3/2006 dan UU No.50/2009. Kewenangan absolut dan relatif PA, asas persidangan, surat gugatan/permohonan, mediasi (Perma No.1/2016), proses persidangan (pembacaan gugatan, jawaban, eksepsi, rekonvensi, replik, duplik, kesimpulan), pembuktian (surat, saksi, persangkaan, pengakuan, sumpah), putusan sela dan akhir, kekuatan putusan, upaya hukum (banding, kasasi, PK, perlawanan/verzet), eksekusi dan sita, biaya perkara.",
+  ELIT:"E-Litigasi Peradilan Agama: Perma No.1/2019 tentang Administrasi Perkara dan Persidangan Elektronik. e-Court: pendaftaran perkara online, penaksiran panjar biaya perkara elektronik, pembayaran online. e-Summons: panggilan dan pemberitahuan elektronik, domisili elektronik. e-Litigation: jawaban, replik, duplik, kesimpulan secara elektronik, pembuktian elektronik, pemberitahuan putusan elektronik, minutasi elektronik.",
+  HPER:"Hukum Perkawinan: UU No.1/1974 diubah UU No.16/2019, PP No.9/1975, Permenag No.11/2007 tentang pencatatan nikah. Asas monogami, syarat perkawinan (materil dan formil), larangan perkawinan, pencatatan nikah, perjanjian perkawinan, hak-kewajiban suami istri, harta benda perkawinan (asal dan bersama), putusnya perkawinan (cerai talak, cerai gugat, fasakh), akibat hukum perceraian, anak dan orang tua, pembuktian asal-usul anak, perkawinan campuran dan beda agama.",
+  UKEH:"UU Kekuasaan Kehakiman No.48/2009. Asas-asas: bebas, mandiri, imparsial, sederhana, cepat, biaya ringan. Mahkamah Agung: susunan, wewenang (kasasi, PK, grasi, fatwa), pengawasan. Mahkamah Konstitusi: kewenangan, judicial review. Badan peradilan di bawah MA: pengadilan umum, agama, militer, TUN. Hakim: persyaratan, pengangkatan, sumpah jabatan, larangan rangkap jabatan, pemberhentian. Komisi Yudisial. Bantuan hukum. Pengadilan khusus.",
+  UPAN:"Panitera dan Panitera Pengganti Pengadilan Agama berdasarkan UU No.7/1989 beserta perubahan, SK KMA No.004/SK/II/1992. Panitera: tugas memimpin kepaniteraan, menyelenggarakan administrasi perkara, membuat berita acara sidang, melaksanakan putusan, legalisasi salinan putusan. Panitera Muda: Gugatan, Permohonan, Hukum. Panitera Pengganti: mendampingi hakim, mencatat jalannya sidang, membuat berita acara persidangan, tanggung jawab atas kebenaran BA. Syarat pengangkatan, jenjang karir kepaniteraan.",
+  UJUR:"Jurusita dan Jurusita Pengganti Pengadilan Agama berdasarkan UU No.7/1989 beserta perubahan. Tugas Jurusita: melaksanakan perintah ketua PA, menyampaikan pengumuman, teguran, dan protes. Pelaksanaan panggilan: relaas panggilan, syarat panggilan patut (resmi dan layak), tenggang waktu panggilan, panggilan delegasi (tabayun), panggilan ghaib/tergugat tidak diketahui tempat tinggal. Pemberitahuan isi putusan. Sita jaminan dan sita eksekusi: syarat, prosedur, berita acara sita. Eksekusi riil dan eksekusi pembayaran sejumlah uang.",
+};
+const SYS=`Kamu adalah pakar hukum Islam dan hukum acara peradilan agama Indonesia. Buat soal kuis pilihan ganda berkualitas tinggi dan akurat.
+
+ATURAN:
+- Variasikan jenis soal: definisi, pasal/ayat spesifik, prosedur, perbandingan, kasus, angka/batas waktu, syarat-syarat, akibat hukum
+- 4 pilihan (A B C D), hanya 1 benar; pengecoh harus masuk akal
+- Bahasa Indonesia baku; tingkat kesulitan campur (mudah/sedang/sulit)
+- Berdasarkan hukum positif Indonesia yang berlaku
+- KEMBALIKAN HANYA JSON VALID, tanpa markdown, tanpa komentar, tanpa teks lain
+
+Format: {"questions":[{"id":1,"question":"...","options":{"A":"...","B":"...","C":"...","D":"..."},"answer":"A","explanation":"...","difficulty":"mudah"}]}`;
+
+/* ════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════ */
+let S={
+  screen:"home",
+  apiKey:localStorage.getItem("gk")||"",
+  showKey:false,
+  topics:[],
+  count:20,
+  questions:[],
+  idx:0,
+  picked:null,
+  showExpl:false,
+  score:0,
+  cache:{},
+  loading:false,
+  loadMsg:"",
+  error:null,
+};
+
+/* ════════════════════════════════════════════
+   GEMINI API
+════════════════════════════════════════════ */
+async function callGemini(topic, batch, offset){
+  const topicObj=TOPICS.find(t=>t.id===topic);
+  const batchNum=Math.floor(offset/batch)+1;
+  const prompt=`Buat TEPAT ${batch} soal pilihan ganda tentang:\n${DETAIL[topic]}\n\nBatch ke-${batchNum} — buat soal BERBEDA dari batch sebelumnya. ID mulai dari ${offset+1}.\n\nKEMBALIKAN HANYA JSON VALID sesuai format.`;
+
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(S.apiKey)}`;
+  const res=await fetch(url,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      system_instruction:{parts:[{text:SYS}]},
+      contents:[{parts:[{text:prompt}]}],
+      generationConfig:{temperature:0.85,maxOutputTokens:4096,responseMimeType:"application/json"},
+    }),
+  });
+  if(!res.ok){
+    const e=await res.json().catch(()=>({}));
+    const msg=e?.error?.message||`HTTP ${res.status}`;
+    throw new Error(msg);
+  }
+  const data=await res.json();
+  const text=data?.candidates?.[0]?.content?.parts?.[0]?.text||"";
+  const clean=text.replace(/```json|```/g,"").trim();
+  let parsed;
+  try{parsed=JSON.parse(clean);}
+  catch{const m=clean.match(/\{[\s\S]*\}/);if(m)parsed=JSON.parse(m[0]);else throw new Error("Respons AI tidak valid — coba lagi");}
+  return parsed.questions||[];
+}
+
+/* ════════════════════════════════════════════
+   ACTIONS
+════════════════════════════════════════════ */
+function saveKey(v){S.apiKey=v;localStorage.setItem("gk",v);render()}
+function toggleKey(){S.showKey=!S.showKey;render()}
+function toggleTopic(id){
+  const i=S.topics.indexOf(id);
+  if(i>=0)S.topics.splice(i,1);else S.topics.push(id);
+  render();
+}
+function setCount(n){S.count=n;render()}
+
+async function startQuiz(){
+  if(!S.apiKey||S.topics.length===0)return;
+  S.screen="loading";S.error=null;S.loadMsg="Menghubungi Gemini AI...";render();
+  try{
+    const perTopic=Math.ceil(S.count/S.topics.length);
+    const need=Math.max(10,Math.ceil(perTopic/10)*10);
+    for(let i=0;i<S.topics.length;i++){
+      const tid=S.topics[i];
+      const got=(S.cache[tid]||[]).length;
+      S.loadMsg=`Memuat ${TOPICS.find(t=>t.id===tid).label}… (${i+1}/${S.topics.length})`;render();
+      let filled=got;
+      while(filled<need){
+        const qs=await callGemini(tid,10,filled);
+        S.cache[tid]=[...(S.cache[tid]||[]),...qs];
+        filled+=qs.length;
+        S.loadMsg=`${TOPICS.find(t=>t.id===tid).label}: ${filled} soal siap`;render();
+      }
+    }
+    let pool=[];
+    S.topics.forEach(tid=>{
+      const to=TOPICS.find(t=>t.id===tid);
+      const sl=(S.cache[tid]||[]).slice(0,Math.ceil(S.count/S.topics.length));
+      pool.push(...sl.map(q=>({...q,topicId:tid,topicIcon:to.icon})));
+    });
+    pool=pool.sort(()=>Math.random()-.5).slice(0,S.count);
+    S.questions=pool;S.idx=0;S.picked=null;S.showExpl=false;S.score=0;
+    S.screen="quiz";render();
+  }catch(e){
+    S.error="❌ "+e.message;S.screen="home";render();
+  }
+}
+
+function pick(opt){
+  if(S.picked)return;
+  S.picked=opt;S.showExpl=true;
+  if(opt===S.questions[S.idx].answer)S.score++;
+  render();
+}
+function next(){
+  if(S.idx+1>=S.questions.length){S.screen="result";}
+  else{S.idx++;S.picked=null;S.showExpl=false;}
+  render();
+}
+function toHome(){
+  S.screen="home";S.questions=[];S.idx=0;S.picked=null;
+  S.showExpl=false;S.score=0;S.error=null;render();
+}
+function retry(){
+  S.questions=S.questions.sort(()=>Math.random()-.5);
+  S.idx=0;S.picked=null;S.showExpl=false;S.score=0;
+  S.screen="quiz";render();
+}
+
+/* ════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════ */
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function ring(pct){
+  const r=60,cx=74,cy=74,c=2*Math.PI*r,d=pct/100*c;
+  return `<svg width="148" height="148" viewBox="0 0 148 148">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(201,170,113,.1)" stroke-width="10"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#rg)" stroke-width="10"
+      stroke-linecap="round" stroke-dasharray="${d} ${c}" transform="rotate(-90 ${cx} ${cy})"/>
+    <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#C9AA71"/><stop offset="100%" stop-color="#F0DBA8"/>
+    </linearGradient></defs></svg>`;
+}
+
+/* ════════════════════════════════════════════
+   RENDER
+════════════════════════════════════════════ */
+function render(){
+  document.getElementById("wrap").innerHTML=view();
+  bind();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function view(){
+  if(S.screen==="loading") return viewLoading();
+  if(S.screen==="quiz")    return viewQuiz();
+  if(S.screen==="result")  return viewResult();
+  return viewHome();
+}
+
+/* ── HOME ── */
+function viewHome(){
+  const ok=S.apiKey.length>20&&S.topics.length>0;
+  const keyMasked=S.apiKey?`${S.apiKey.slice(0,8)}${"•".repeat(Math.min(20,S.apiKey.length-8))}`:"";
+  return `<div class="anim-up">
+    <div class="header">
+      <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+      <div class="divider"><div class="divider-line"></div><div class="divider-gem"></div><div class="divider-line"></div></div>
+      <div class="app-title">KUIS <span class="hi">HUKUM</span> ISLAM</div>
+      <div class="app-tagline">& Peradilan Agama Indonesia</div>
+      <div style="display:flex;justify-content:center;margin-top:8px">
+        <div class="app-powered"><div class="gem"></div> Powered by Gemini AI</div>
+      </div>
+    </div>
+
+    ${S.error?`<div class="err">${esc(S.error)}</div>`:""}
+
+    <div class="card">
+      <div class="card-label">🔑 Gemini API Key</div>
+      <div class="key-field">
+        <input class="key-input" id="ki" type="${S.showKey?"text":"password"}"
+          placeholder="AIzaSy..." value="${esc(S.apiKey)}"/>
+        <button class="key-eye" id="ke">${S.showKey?"🙈":"👁️"}</button>
+      </div>
+      ${S.apiKey.length>20
+        ?`<div class="key-ok">✅ API Key tersimpan di browser Anda</div>`
+        :`<div class="key-note">
+            Dapatkan gratis di <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a>
+            → Get API Key → Create API Key<br/>
+            Key disimpan hanya di perangkat Anda (localStorage), tidak dikirim ke server lain.
+          </div>`}
+    </div>
+
+    <div class="card">
+      <div class="card-label">📚 Pilih Materi</div>
+      <div class="topic-grid">
+        ${TOPICS.map(t=>{
+          const on=S.topics.includes(t.id);
+          return `<button class="topic-btn${on?" on":""}" data-tp="${t.id}">
+            <span class="topic-icon">${t.icon}</span>
+            <div class="topic-texts">
+              <div class="topic-id">${t.label}</div>
+              <div class="topic-nm">${t.name}</div>
+            </div>
+            <div class="topic-ck">✓</div>
+          </button>`;
+        }).join("")}
+      </div>
+      ${S.topics.length?`<div style="margin-top:10px;font-size:11px;color:var(--textdim);line-height:1.7">
+        ${S.topics.map(id=>TOPICS.find(t=>t.id===id).name).join(" · ")}
+      </div>`:""}
+    </div>
+
+    <div class="card">
+      <div class="card-label">🎯 Jumlah Soal</div>
+      <div class="count-row">
+        ${[10,20,30,50,75,100].map(n=>`<button class="count-btn${S.count===n?" on":""}" data-ct="${n}">${n}</button>`).join("")}
+      </div>
+    </div>
+
+    <button class="btn-gold" id="bs" ${ok?"":"disabled"}>
+      ${!S.apiKey||S.apiKey.length<=20
+        ?"🔑 Masukkan Gemini API Key"
+        :S.topics.length===0
+        ?"📚 Pilih minimal 1 materi"
+        :`✨ Mulai Kuis — ${S.count} Soal`}
+    </button>
+
+    <div class="footer">
+      Soal dibuat dinamis oleh Gemini AI · Setiap sesi soal selalu berbeda<br/>
+      KHI · KHES · HAPA · E-Litigasi · Hukum Perkawinan · UU Kehakiman · Panitera · Jurusita
+    </div>
+  </div>`;
+}
+
+/* ── LOADING ── */
+function viewLoading(){
+  return `<div class="anim-up">
+    <div class="header">
+      <div class="bismillah" style="font-size:22px">بِسْمِ اللَّهِ</div>
+      <div class="divider"><div class="divider-line"></div><div class="divider-gem"></div><div class="divider-line"></div></div>
+      <div class="app-title">Menyiapkan <span class="hi">Soal</span></div>
+    </div>
+    <div class="card">
+      <div class="loading-wrap">
+        <div class="spinner"></div>
+        <div class="ld-title">Gemini AI sedang bekerja…</div>
+        <div class="ld-msg">${esc(S.loadMsg)}</div>
+        <div class="ld-sub">Membuat soal berkualitas tinggi berdasarkan hukum positif Indonesia</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ── QUIZ ── */
+function viewQuiz(){
+  const q=S.questions[S.idx];
+  const total=S.questions.length;
+  const prog=((S.idx+(S.picked?1:0))/total*100).toFixed(1);
+  const diff=q.difficulty||"sedang";
+  const to=TOPICS.find(t=>t.id===q.topicId)||{};
+
+  const opts=Object.entries(q.options).map(([k,v])=>{
+    let cl="opt";
+    if(S.picked){
+      cl+=" locked";
+      if(k===q.answer)cl+=" correct";
+      else if(k===S.picked)cl+=" wrong";
+      else cl+=" faded";
+    }
+    return `<button class="${cl}" data-op="${k}">
+      <div class="opt-key">${k}</div>
+      <div class="opt-val">${esc(v)}</div>
+    </button>`;
+  }).join("");
+
+  return `<div class="anim-up">
+    <div class="quiz-bar">
+      <div class="quiz-counter">Soal ${S.idx+1} / ${total}</div>
+      <div class="quiz-score">✓ ${S.score} Benar</div>
+    </div>
+    <div class="prog-track"><div class="prog-fill" style="width:${prog}%"></div></div>
+    <div class="card">
+      <div class="q-meta">
+        <div class="q-topic">${to.icon||"📋"} ${esc(q.topicId)}</div>
+        <div class="q-diff diff-${diff}">${diff.toUpperCase()}</div>
+      </div>
+      <div class="q-text">${esc(q.question)}</div>
+      <div class="opts">${opts}</div>
+      ${S.showExpl&&q.explanation?`<div class="expl"><strong>💡 Penjelasan:</strong> ${esc(q.explanation)}</div>`:""}
+    </div>
+    ${S.picked?`<button class="btn-next" id="bn">${S.idx+1>=total?"📊 Lihat Hasil →":"Soal Berikutnya →"}</button>`:""}
+  </div>`;
+}
+
+/* ── RESULT ── */
+function viewResult(){
+  const total=S.questions.length;
+  const pct=Math.round(S.score/total*100);
+  const wrong=total-S.score;
+  const vd=pct>=90?"Luar Biasa! 🏆":pct>=75?"Sangat Baik! 🌟":pct>=60?"Cukup Baik 👍":pct>=40?"Perlu Belajar Lagi 📚":"Terus Berlatih 💪";
+  const ds=pct>=75?"Pemahaman hukum Anda sudah sangat baik! Pertahankan terus.":"Pelajari kembali materi yang masih perlu ditingkatkan.";
+  return `<div class="anim-pop">
+    <div class="header">
+      <div class="bismillah" style="font-size:20px">الحَمْدُ لِلَّهِ</div>
+      <div class="divider"><div class="divider-line"></div><div class="divider-gem"></div><div class="divider-line"></div></div>
+      <div class="app-title">Hasil <span class="hi">Kuis</span></div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="ring-wrap">
+        <div class="ring-box">
+          ${ring(pct)}
+          <div class="ring-inner">
+            <div class="ring-pct">${pct}%</div>
+            <div class="ring-lbl">NILAI</div>
+          </div>
+        </div>
+      </div>
+      <div class="verdict">${vd}</div>
+      <div class="verdict-sub">${ds}</div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-val" style="color:var(--teal)">${S.score}</div><div class="stat-lbl">BENAR</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--rose)">${wrong}</div><div class="stat-lbl">SALAH</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--gold)">${total}</div><div class="stat-lbl">TOTAL</div></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-outline" id="bh">← Ganti Materi</button>
+        <button class="btn-fill"    id="br">🔄 Soal Baru</button>
+      </div>
+    </div>
+    <div class="footer" style="margin-top:10px">Materi: ${esc(S.topics.join(" · "))}</div>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════
+   BIND EVENTS
+════════════════════════════════════════════ */
+function bind(){
+  const ki=document.getElementById("ki");
+  if(ki)ki.addEventListener("input",e=>saveKey(e.target.value));
+  const ke=document.getElementById("ke");
+  if(ke)ke.addEventListener("click",toggleKey);
+  document.querySelectorAll(".topic-btn[data-tp]").forEach(b=>b.addEventListener("click",()=>toggleTopic(b.dataset.tp)));
+  document.querySelectorAll(".count-btn[data-ct]").forEach(b=>b.addEventListener("click",()=>setCount(+b.dataset.ct)));
+  const bs=document.getElementById("bs");
+  if(bs)bs.addEventListener("click",startQuiz);
+  document.querySelectorAll(".opt[data-op]").forEach(b=>b.addEventListener("click",()=>pick(b.dataset.op)));
+  const bn=document.getElementById("bn");
+  if(bn)bn.addEventListener("click",next);
+  const bh=document.getElementById("bh");
+  if(bh)bh.addEventListener("click",toHome);
+  const br=document.getElementById("br");
+  if(br)br.addEventListener("click",retry);
+}
+
+/* ════════════════════════════════════════════
+   SERVICE WORKER (offline cache)
+════════════════════════════════════════════ */
+if("serviceWorker" in navigator){
+  const sw=`const C="kuis-v2";
+self.addEventListener("install",e=>e.waitUntil(caches.open(C).then(c=>c.add("/"))));
+self.addEventListener("fetch",e=>{
+  if(e.request.url.includes("googleapis.com")||e.request.url.includes("fonts."))return;
+  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));
+});`;
+  const b=new Blob([sw],{type:"application/javascript"});
+  navigator.serviceWorker.register(URL.createObjectURL(b)).catch(()=>{});
+}
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+render();
+</script>
+</body>
+</html>
